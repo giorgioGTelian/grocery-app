@@ -5,63 +5,62 @@ import '@vaadin/text-field';
 import '@vaadin/number-field';
 import '@vaadin/button';
 import '@vaadin/grid';
-//import { GroceryItem } from '../../generated/com/example/application/data/entity/GroceryItem';
+import GroceryItem from 'Frontend/generated/com/example/application/GroceryItem.js';
+import { GroceryEndpoint } from 'Frontend/generated/endpoints.js';
+import GroceryItemModel from 'Frontend/generated/com/example/application/GroceryItemModel.js';
+import { Binder, field } from '@hilla/form';
+
 
 @customElement('grocery-view')
 export class GroceryView extends View {
-  @property({ type: String }) item = '';
-  @property({ type: Number }) quantity = 0;
+  
 
-  //@state() groceryItems: GroceryItem[] = [];
+  @state() groceryItems: GroceryItem[] = [];
+  private binder = new Binder(this, GroceryItemModel);
 
 
   render() {
+    const {model } = this.binder;
+
     return html`
       <h1>Welcome to the Grocery App</h1>
       <div>
         <vaadin-text-field
           label="Item"
           placeholder="Enter item"
-          @change="${this.itemChanged}"
+          ${field(model.name)}
         ></vaadin-text-field>
         <vaadin-number-field
           label="Quantity"
           placeholder="Enter quantity"
-          @change="${this.quantityChanged}"
+        ${field(model.quantity)}
         ></vaadin-number-field>
-        <vaadin-button @click="${this.addItem}">Add</vaadin-button>
+        <vaadin-button @click=${this.addItem}>Add</vaadin-button>
       </div>
-      <vaadin-grid>
-        <vaadin-grid-column path="item" header="Item"></vaadin-grid-column>
+      <h2>Shopping List</h2>
+      <vaadin-grid .items=${this.groceryItems}>
+        <vaadin-grid-column path="name" header="Item">
+          <template> <strong>[[item]]</strong> </template>
+        </vaadin-grid-column>
         <vaadin-grid-column
           path="quantity"
           header="Quantity"
-        ></vaadin-grid-column>
+        >
+        <template> <strong>[[quantity]]</strong> </template>
+      </vaadin-grid-column>
       </vaadin-grid>
     `;
   }
 
-  
-  itemChanged(e: CustomEvent) {
-    this.item = e.detail.value;
+  async addItem() {
+    const saved = await this.binder.submitTo(GroceryEndpoint.save);
+    if (saved) {
+      this.groceryItems = [...this.groceryItems, saved];
+      this.binder.clear();
+    }
   }
 
-  quantityChanged(e: CustomEvent) {
-    this.quantity = e.detail.value;
-  }
-
-  addItem() {
-    this.dispatchEvent(new CustomEvent('item-added', {
-      detail: {
-          item: this.item,
-          quantity: this.quantity
-      },
-      bubbles: true, // This event bubbles up through the DOM
-      composed: true // This event can cross the shadow DOM boundary
-  }));
-  }
-
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
     this.classList.add(
       'flex',
@@ -73,5 +72,6 @@ export class GroceryView extends View {
       'text-center',
       'box-border'
     );
+    this.groceryItems = await GroceryEndpoint.findAll();
   }
 }

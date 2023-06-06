@@ -17,8 +17,10 @@ public class GroceryItem {
 
     @NotBlank(message = "Name is mandatory")
     private String name;
+
     @Min(value = 0, message = "Quantity must be positive")
     private int quantity;
+    
     public UUID getId() {
         return id;
     }
@@ -27,5 +29,12 @@ public class GroceryItem {
     }
     public String getName() {
         return name;
+    }
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
