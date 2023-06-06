@@ -3,9 +3,13 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
 
-@Entity
+
+@jakarta.persistence.Entity
 public class GroceryItem {
     @Id
     @GeneratedValue

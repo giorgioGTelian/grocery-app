@@ -1,15 +1,18 @@
 import { html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { View } from '../../views/view.js';
 import '@vaadin/text-field';
 import '@vaadin/number-field';
 import '@vaadin/button';
 import '@vaadin/grid';
+//import { GroceryItem } from '../../generated/com/example/application/data/entity/GroceryItem';
 
 @customElement('grocery-view')
 export class GroceryView extends View {
   @property({ type: String }) item = '';
   @property({ type: Number }) quantity = 0;
+
+  //@state() groceryItems: GroceryItem[] = [];
 
 
   render() {
@@ -28,6 +31,13 @@ export class GroceryView extends View {
         ></vaadin-number-field>
         <vaadin-button @click="${this.addItem}">Add</vaadin-button>
       </div>
+      <vaadin-grid>
+        <vaadin-grid-column path="item" header="Item"></vaadin-grid-column>
+        <vaadin-grid-column
+          path="quantity"
+          header="Quantity"
+        ></vaadin-grid-column>
+      </vaadin-grid>
     `;
   }
 
