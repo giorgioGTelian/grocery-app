@@ -1,6 +1,7 @@
 import { Router } from '@vaadin/router';
 import { routes } from './routes.js';
 import { appStore } from './stores/app-store.js';
+import { GroceryEndpoint } from './generated/endpoints.js';
 
 export const router = new Router(document.querySelector('#outlet'));
 
@@ -15,3 +16,5 @@ window.addEventListener('vaadin-router-location-changed', (e) => {
     document.title = appStore.applicationName;
   }
 });
+
+GroceryEndpoint.greet("Hello World!").then(msg => console.log(msg));
